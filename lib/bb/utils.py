@@ -1414,7 +1414,7 @@ def edit_metadata_file(meta_file, variables, varfunc):
     return updated
 
 
-def edit_bblayers_conf(bblayers_conf, add, remove, edit_cb=None):
+def edit_bblayers_conf(bblayers_conf, add, remove, edit_cb=None, prepend=None):
     """Edit bblayers.conf, adding and/or removing layers
     Parameters:
         bblayers_conf: path to bblayers.conf file to edit
@@ -1424,6 +1424,7 @@ def edit_bblayers_conf(bblayers_conf, add, remove, edit_cb=None):
             empty list to remove nothing
         edit_cb: optional callback function that will be called after
             processing adds/removes once per existing entry.
+        prepend: optional support add-layer to prepend
     Returns a tuple:
         notadded: list of layers specified to be added but weren't
             (because they were already in the list)
@@ -1484,7 +1485,10 @@ def edit_bblayers_conf(bblayers_conf, add, remove, edit_cb=None):
             for addlayer in addlayers:
                 if addlayer not in bblayers:
                     updated = True
-                    bblayers.append(addlayer)
+                    if prepend:
+                        bblayers.insert(0,addlayer)
+                    else:
+                        bblayers.append(addlayer)
             del addlayers[:]
 
         if edit_cb:
